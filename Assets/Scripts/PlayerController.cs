@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform bulletSpawnPoint;
+    [SerializeField] private GameObject explosionPrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -49,6 +50,16 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Instantiate(bulletPrefab, bulletSpawnPoint.transform.position, transform.rotation);
+        }
+    }
+    
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(col.gameObject);
+            Destroy(gameObject);
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         }
     }
 }
