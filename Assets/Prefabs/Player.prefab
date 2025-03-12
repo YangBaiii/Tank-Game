@@ -140,7 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 8199482963067850542, guid: f10d5a5323239a047a99c098ee9c2f21, type: 3}
   bulletSpawnPoint: {fileID: 7773719344853346453}
-  explosionPrefab: {fileID: 0}
+  explosionPrefab: {fileID: 7460001320583156643, guid: 564e0e1864f8db84f9fa30d984c01538, type: 3}
 --- !u!50 &733921560135307977
 Rigidbody2D:
   serializedVersion: 4

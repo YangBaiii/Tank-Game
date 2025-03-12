@@ -15,7 +15,7 @@ public class PlayerBullet : MonoBehaviour
     void Update()
     {
         transform.position += transform.right * bulletSpeed * Time.deltaTime;
-        if (transform.position.x < -10 || transform.position.x > 10 || transform.position.y < -10 || transform.position.y > 10)
+        if (transform.position.x < -5 || transform.position.x > 20 || transform.position.y < -20 || transform.position.y > 20)
         {
             Destroy(gameObject);
         }
