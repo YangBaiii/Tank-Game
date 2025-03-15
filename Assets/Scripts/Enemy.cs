@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     private int randomAngle;
     
     [SerializeField] private GameObject enemyBulletPrefab;
+    [SerializeField] private GameObject destroyPrefab;
     [SerializeField] private Transform enemyBulletSpawnPoint;
     [SerializeField] private GameObject explosionPrefab;
 
@@ -17,10 +18,12 @@ public class Enemy : MonoBehaviour
     private float maxSpawnDelay = 2f;
 
     private float spawnDelay;
+    HealthSystemForDummies healthSystem;
     // Start is called before the first frame update
     void Start()
     {
         ShootBullet();
+        healthSystem = GetComponent<HealthSystemForDummies>();
     }
 
     void Update()
@@ -66,6 +69,36 @@ public class Enemy : MonoBehaviour
            Destroy(collision);
            Destroy(gameObject);
            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        }
+
+        if (collision.gameObject.CompareTag("Destructible"))
+        {
+            Destroy(collision);
+            healthSystem.AddToCurrentHealth(-10);
+            if (healthSystem.IsAlive)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+                Destroy(gameObject);
+            }
+        }
+        
+        if (collision.gameObject.CompareTag("UnDestructible"))
+        {
+            Destroy(collision);
+            healthSystem.AddToCurrentHealth(-10);
+            if (healthSystem.IsAlive)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+                Destroy(gameObject);
+            }
         }
     }
 

@@ -11,7 +11,7 @@ public class MapGenerator : MonoBehaviour
     private int nonDestructibleCount = 10;
 
     private List<Vector2> occupiedPositions = new List<Vector2>(); // Tracks all obstacles
-    private float minDistance = 2.0f; // Minimum distance between any two obstacles
+    private float minDistance = 3.0f; // Minimum distance between any two obstacles
 
     void Start()
     {
@@ -22,7 +22,7 @@ public class MapGenerator : MonoBehaviour
     void GenerateObstacles(GameObject obstaclePrefab, int count)
     {
         int attempts = 0;
-        int maxAttempts = 1000;
+        int maxAttempts = 5000;
 
         for (int i = 0; i < count; i++)
         {
