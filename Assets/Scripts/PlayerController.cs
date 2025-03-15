@@ -1,65 +1,94 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private float playerSpeed = 7f;
+    private float normalSpeed = 2.5f;
+    private float sprintSpeed = 5f;
+    private float playerSpeed;
+    public bool canSprint = true; // Tracks if sprint is available
 
-    private Vector2 playPosition;
+    public float sprintDuration = 2.5f; // How long the player can sprint
+    public float sprintCooldownDuration = 1.5f; // Cooldown duration after sprinting
+    public float sprintTimer = 0f; // Timer to track sprint duration
+    public float cooldownTimer = 0f; // Timer to track cooldown period
+    public bool isSprinting = false; // Is the player currently sprinting?
 
-    [SerializeField] GameObject bulletPrefab;
-    [SerializeField] Transform bulletSpawnPoint;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Transform bulletSpawnPoint;
+    [SerializeField] private GameObject destroyPrefab;
     [SerializeField] private GameObject explosionPrefab;
-    // Start is called before the first frame update
+
+    public SprintBar sprintBar; // Reference to the sprint bar script
+
     void Start()
     {
-        
+        playerSpeed = normalSpeed;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        playPosition = transform.position;
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.rotation = Quaternion.Euler(0,0,90);
-            playPosition.y += playerSpeed * Time.deltaTime;
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            transform.rotation = Quaternion.Euler(0,0,180);
-            playPosition.x -= playerSpeed * Time.deltaTime;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            transform.rotation = Quaternion.Euler(0,0,270);
-            playPosition.y -= playerSpeed * Time.deltaTime;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            transform.rotation = Quaternion.Euler(0,0,0);
-            playPosition.x += playerSpeed * Time.deltaTime;
-        }
-        transform.position = playPosition;
+        HandleSprint();
+        MovePlayer();
+        RotateTowardsMouse();
         ShootBullet();
+    }
+
+    void MovePlayer()
+    {
+        Vector2 moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        transform.position += (Vector3)(moveDirection * playerSpeed * Time.deltaTime);
+    }
+
+    void RotateTowardsMouse()
+    {
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (mousePosition - transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     void ShootBullet()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Instantiate(bulletPrefab, bulletSpawnPoint.transform.position, transform.rotation);
+            Instantiate(bulletPrefab, bulletSpawnPoint.position, transform.rotation);
         }
     }
-    
-    private void OnTriggerEnter2D(Collider2D col)
+
+    void HandleSprint()
     {
-        if (col.gameObject.CompareTag("Enemy"))
+        if (canSprint)
         {
-            Destroy(col.gameObject);
-            Destroy(gameObject);
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            if (Input.GetKey(KeyCode.LeftShift) && !isSprinting)
+            {
+                isSprinting = true;
+                sprintTimer = sprintDuration; // Reset sprint timer
+                playerSpeed = sprintSpeed; // Set sprint speed
+            }
+
+            if (isSprinting)
+            {
+                sprintTimer -= Time.deltaTime;
+
+                if (sprintTimer <= 0f) // Sprint ended
+                {
+                    isSprinting = false;
+                    playerSpeed = normalSpeed;
+                    cooldownTimer = sprintCooldownDuration; // Start cooldown
+                    canSprint = false; // Disable sprinting during cooldown
+                }
+            }
+        }
+        else
+        {
+            // Handle cooldown and refilling the sprint bar
+            cooldownTimer -= Time.deltaTime;
+
+            if (cooldownTimer <= 0f)
+            {
+                canSprint = true; // Enable sprint again after cooldown
+            }
         }
     }
 }
