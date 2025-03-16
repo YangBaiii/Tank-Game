@@ -1,37 +1,43 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
     private float normalSpeed = 2.5f;
     private float sprintSpeed = 5f;
     private float playerSpeed;
-    public bool canSprint = true; // Tracks if sprint is available
+    public bool canSprint = true;
+    public bool isSprinting = false;
 
-    public float sprintDuration = 2.5f; // How long the player can sprint
-    public float sprintCooldownDuration = 1.5f; // Cooldown duration after sprinting
-    public float sprintTimer = 0f; // Timer to track sprint duration
-    public float cooldownTimer = 0f; // Timer to track cooldown period
-    public bool isSprinting = false; // Is the player currently sprinting?
+    public float maxSprintDuration = 5f; // Maximum sprint duration
+    public float sprintCooldown = 1.5f;  // Cooldown before sprint can be used again
+    public float remainingSprintTime;    // Stores remaining sprint time
 
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Transform bulletSpawnPoint;
+    public UnityEvent<float> OnSprintTimeChanged;
+
+    [SerializeField] GameObject bulletPrefab;
+    [SerializeField] Transform bulletSpawnPoint;
     [SerializeField] private GameObject destroyPrefab;
     [SerializeField] private GameObject explosionPrefab;
-
-    public SprintBar sprintBar; // Reference to the sprint bar script
+    HealthSystemForDummies healthSystem;
 
     void Start()
     {
         playerSpeed = normalSpeed;
+        healthSystem = GetComponent<HealthSystemForDummies>();
+        remainingSprintTime = maxSprintDuration;
+        if (OnSprintTimeChanged == null)
+            OnSprintTimeChanged = new UnityEvent<float>();
     }
 
     void Update()
     {
-        HandleSprint();
         MovePlayer();
         RotateTowardsMouse();
         ShootBullet();
+        HandleSprint();
     }
 
     void MovePlayer()
@@ -58,36 +64,77 @@ public class PlayerController : MonoBehaviour
 
     void HandleSprint()
     {
-        if (canSprint)
+        float previousSprintTime = remainingSprintTime;
+        
+        if (Input.GetKey(KeyCode.LeftShift) && canSprint && remainingSprintTime > 0)
         {
-            if (Input.GetKey(KeyCode.LeftShift) && !isSprinting)
+            isSprinting = true;
+            playerSpeed = sprintSpeed;
+            remainingSprintTime -= Time.deltaTime;
+            
+            if (remainingSprintTime <= 0)
             {
-                isSprinting = true;
-                sprintTimer = sprintDuration; // Reset sprint timer
-                playerSpeed = sprintSpeed; // Set sprint speed
-            }
-
-            if (isSprinting)
-            {
-                sprintTimer -= Time.deltaTime;
-
-                if (sprintTimer <= 0f) // Sprint ended
-                {
-                    isSprinting = false;
-                    playerSpeed = normalSpeed;
-                    cooldownTimer = sprintCooldownDuration; // Start cooldown
-                    canSprint = false; // Disable sprinting during cooldown
-                }
+                isSprinting = false;
+                canSprint = false;
+                playerSpeed = normalSpeed;
+                StartCoroutine(SprintCooldown());
             }
         }
-        else
+        else if (Input.GetKeyUp(KeyCode.LeftShift) || !isSprinting)
         {
-            // Handle cooldown and refilling the sprint bar
-            cooldownTimer -= Time.deltaTime;
+            playerSpeed = normalSpeed;
+        }
 
-            if (cooldownTimer <= 0f)
+        if (previousSprintTime != remainingSprintTime)
+        {
+            OnSprintTimeChanged.Invoke(remainingSprintTime);
+        }
+    }
+
+    IEnumerator SprintCooldown()
+    {
+        yield return new WaitForSeconds(sprintCooldown);
+        remainingSprintTime = maxSprintDuration;
+        OnSprintTimeChanged.Invoke(remainingSprintTime);
+        canSprint = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(collision.gameObject);
+            Destroy(gameObject);
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        }
+        
+        if (collision.gameObject.CompareTag("Destructible"))
+        {
+            Destroy(collision);
+            healthSystem.AddToCurrentHealth(-10);
+            if (healthSystem.IsAlive)
             {
-                canSprint = true; // Enable sprint again after cooldown
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+                Destroy(gameObject);
+            }
+        }
+        
+        if (collision.gameObject.CompareTag("UnDestructible"))
+        {
+            Destroy(collision);
+            healthSystem.AddToCurrentHealth(-10);
+            if (healthSystem.IsAlive)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+                Destroy(gameObject);
             }
         }
     }
