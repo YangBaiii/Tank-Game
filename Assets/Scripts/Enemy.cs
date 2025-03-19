@@ -8,22 +8,22 @@ public class Enemy : MonoBehaviour
     private float enemySpeed = 5f;
     private int[] angles = { 0, 90, 180, 270};
     private int randomAngle;
+    private float maxHealth = 10f;
     
     [SerializeField] private GameObject enemyBulletPrefab;
-    [SerializeField] private GameObject destroyPrefab;
     [SerializeField] private Transform enemyBulletSpawnPoint;
-    [SerializeField] private GameObject explosionPrefab;
 
     private float minSpawnDelay = 1f;
     private float maxSpawnDelay = 2f;
 
     private float spawnDelay;
     HealthSystemForDummies healthSystem;
-    // Start is called before the first frame update
+    
     void Start()
     {
         ShootBullet();
         healthSystem = GetComponent<HealthSystemForDummies>();
+        healthSystem.CurrentHealth = maxHealth;
     }
 
     void Update()
@@ -59,46 +59,6 @@ public class Enemy : MonoBehaviour
         {
             GenerateRandomAngle();
             transform.rotation = Quaternion.Euler(0, 0, randomAngle);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-           Destroy(collision);
-           Destroy(gameObject);
-           Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        }
-
-        if (collision.gameObject.CompareTag("Destructible"))
-        {
-            Destroy(collision);
-            healthSystem.AddToCurrentHealth(-10);
-            if (healthSystem.IsAlive)
-            {
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            }
-            else
-            {
-                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-                Destroy(gameObject);
-            }
-        }
-        
-        if (collision.gameObject.CompareTag("UnDestructible"))
-        {
-            Destroy(collision);
-            healthSystem.AddToCurrentHealth(-10);
-            if (healthSystem.IsAlive)
-            {
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            }
-            else
-            {
-                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-                Destroy(gameObject);
-            }
         }
     }
 

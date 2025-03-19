@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4283046939132356663}
   - component: {fileID: 8158916731633095902}
   - component: {fileID: 2031171495999010647}
+  - component: {fileID: -7612291942032540071}
   m_Layer: 0
   m_Name: Destructible
   m_TagString: Destructible
@@ -130,3 +131,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.3333334, y: 1.3333334}
   m_EdgeRadius: 0
+--- !u!114 &-7612291942032540071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4029799473335969126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91cb2a7eb628d8f468e4ff550aaeb50c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
+  explosionPrefab: {fileID: 7460001320583156643, guid: 564e0e1864f8db84f9fa30d984c01538, type: 3}
+  destroyPrefab: {fileID: 8957953883252329584, guid: 5563b02f2920849409f2b04b8b604092, type: 3}
+  explosionSound: {fileID: 8300000, guid: 22c6c05b8b2bf094796f0c69446e73a1, type: 3}
+  destroyedSound: {fileID: 8300000, guid: efd1960fec017d94190b176073832b22, type: 3}

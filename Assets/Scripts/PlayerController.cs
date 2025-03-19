@@ -8,25 +8,26 @@ public class PlayerController : MonoBehaviour
     private float normalSpeed = 2.5f;
     private float sprintSpeed = 5f;
     private float playerSpeed;
+    private float maxHealth = 30f;
     public bool canSprint = true;
     public bool isSprinting = false;
 
     public float maxSprintDuration = 5f; // Maximum sprint duration
     public float sprintCooldown = 1.5f;  // Cooldown before sprint can be used again
     public float remainingSprintTime;    // Stores remaining sprint time
+    public AudioClip shootSound;
 
     public UnityEvent<float> OnSprintTimeChanged;
 
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform bulletSpawnPoint;
-    [SerializeField] private GameObject destroyPrefab;
-    [SerializeField] private GameObject explosionPrefab;
     HealthSystemForDummies healthSystem;
 
     void Start()
     {
         playerSpeed = normalSpeed;
         healthSystem = GetComponent<HealthSystemForDummies>();
+        healthSystem.CurrentHealth = maxHealth;
         remainingSprintTime = maxSprintDuration;
         if (OnSprintTimeChanged == null)
             OnSprintTimeChanged = new UnityEvent<float>();
@@ -59,6 +60,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Instantiate(bulletPrefab, bulletSpawnPoint.position, transform.rotation);
+            SoundManager.Instance.PlaySoundFXClip(shootSound, transform, 1f);
         }
     }
 
@@ -97,45 +99,5 @@ public class PlayerController : MonoBehaviour
         remainingSprintTime = maxSprintDuration;
         OnSprintTimeChanged.Invoke(remainingSprintTime);
         canSprint = true;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            Destroy(collision.gameObject);
-            Destroy(gameObject);
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        }
-        
-        if (collision.gameObject.CompareTag("Destructible"))
-        {
-            Destroy(collision);
-            healthSystem.AddToCurrentHealth(-10);
-            if (healthSystem.IsAlive)
-            {
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            }
-            else
-            {
-                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-                Destroy(gameObject);
-            }
-        }
-        
-        if (collision.gameObject.CompareTag("UnDestructible"))
-        {
-            Destroy(collision);
-            healthSystem.AddToCurrentHealth(-10);
-            if (healthSystem.IsAlive)
-            {
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            }
-            else
-            {
-                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-                Destroy(gameObject);
-            }
-        }
     }
 }

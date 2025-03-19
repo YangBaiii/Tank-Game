@@ -1,13 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class EnemyBullet : MonoBehaviour
 {
     private float bulletSpeed = 8f;
+    public float destructibleDamage = 2.5f;
+    public float playerDamage = 1f;
 
-    [SerializeField] private GameObject explosionPrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,13 +22,25 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (col.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player"))
         {
-            Destroy(col.gameObject);
+            HealthSystemForDummies playerHealth = collision.gameObject.GetComponent<HealthSystemForDummies>();
+            if (playerHealth != null)
+            {
+                playerHealth.AddToCurrentHealth(-playerDamage);
+            }
             Destroy(gameObject);
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        }
+        else if (collision.gameObject.CompareTag("Destructible"))
+        {
+            DestructibleObject destructible = collision.gameObject.GetComponent<DestructibleObject>();
+            if (destructible != null)
+            {
+                destructible.TakeDamage(destructibleDamage);
+            }
+            Destroy(gameObject);
         }
     }
 }
