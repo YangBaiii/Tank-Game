@@ -7,6 +7,7 @@ public class StartInterface : MonoBehaviour
     [Header("Panels")]
     [SerializeField] private GameObject mainMenuPanel;
     [SerializeField] private GameObject quitConfirmationPanel;
+    [SerializeField] private GameObject settingsPanel;
 
     [Header("Buttons")]
     [SerializeField] private Button startButton;
@@ -36,6 +37,8 @@ public class StartInterface : MonoBehaviour
             mainMenuPanel.SetActive(true);
         if (quitConfirmationPanel != null)
             quitConfirmationPanel.SetActive(false);
+        if (settingsPanel != null)
+            settingsPanel.SetActive(false);
     }
 
     private void OnStartButtonClick()
@@ -45,7 +48,11 @@ public class StartInterface : MonoBehaviour
 
     private void OnSettingsButtonClick()
     {
-        SceneManager.LoadScene(settingsSceneIndex);
+        if (settingsPanel != null && mainMenuPanel != null)
+        {
+            mainMenuPanel.SetActive(false);
+            settingsPanel.SetActive(true);
+        }
     }
 
     private void OnLeaderboardsButtonClick()
@@ -59,10 +66,6 @@ public class StartInterface : MonoBehaviour
         {
             mainMenuPanel.SetActive(false);
             quitConfirmationPanel.SetActive(true);
-        }
-        else
-        {
-            QuitGame();
         }
     }
 
