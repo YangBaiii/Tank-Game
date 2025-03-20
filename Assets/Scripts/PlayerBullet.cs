@@ -5,7 +5,7 @@ public class PlayerBullet : MonoBehaviour
     private float bulletSpeed = 10f;
     public float destructibleDamage = 5f;
     public float enemyDamage = 2f;
-
+    public AudioClip bulletHit;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,11 +26,17 @@ public class PlayerBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Destructible"))
         {
+            SoundManager.Instance.PlaySoundFXClip(bulletHit, transform, 1f);
             DestructibleObject destructible = collision.gameObject.GetComponent<DestructibleObject>();
             if (destructible != null)
             {
                 destructible.TakeDamage(destructibleDamage);
             }
+            Destroy(gameObject);
+        }
+        else if (collision.gameObject.CompareTag("UnDestructible"))
+        {
+            SoundManager.Instance.PlaySoundFXClip(bulletHit, transform, 1f);
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Enemy"))
