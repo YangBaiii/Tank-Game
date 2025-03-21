@@ -26,7 +26,7 @@ public class PlayerBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Destructible"))
         {
-            SoundManager.Instance.PlaySoundFXClip(bulletHit, transform, 1f);
+            SoundManager.Instance.PlaySoundFXClip(bulletHit, transform);
             DestructibleObject destructible = collision.gameObject.GetComponent<DestructibleObject>();
             if (destructible != null)
             {
@@ -36,7 +36,7 @@ public class PlayerBullet : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("UnDestructible"))
         {
-            SoundManager.Instance.PlaySoundFXClip(bulletHit, transform, 1f);
+            SoundManager.Instance.PlaySoundFXClip(bulletHit, transform);
             Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("Enemy"))

@@ -22,7 +22,7 @@ public class DestructibleObject : MonoBehaviour
         {
             // Object is destroyed
             Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-            SoundManager.Instance.PlaySoundFXClip(explosionSound, transform, 1f);
+            SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
             Destroy(gameObject);
         }
         else

@@ -60,7 +60,10 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Instantiate(bulletPrefab, bulletSpawnPoint.position, transform.rotation);
-            SoundManager.Instance.PlaySoundFXClip(shootSound, transform, 1f);
+            if (shootSound != null && SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySoundFXClip(shootSound, transform);
+            }
         }
     }
 

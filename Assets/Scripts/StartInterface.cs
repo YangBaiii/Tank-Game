@@ -31,8 +31,7 @@ public class StartInterface : MonoBehaviour
         quitButton.onClick.AddListener(OnQuitButtonClick);
         confirmQuitButton.onClick.AddListener(OnConfirmQuit);
         cancelQuitButton.onClick.AddListener(OnCancelQuit);
-
-        // Initialize panels
+        
         if (mainMenuPanel != null)
             mainMenuPanel.SetActive(true);
         if (quitConfirmationPanel != null)
@@ -76,11 +75,8 @@ public class StartInterface : MonoBehaviour
 
     public void OnCancelQuit()
     {
-        if (quitConfirmationPanel != null && mainMenuPanel != null)
-        {
-            quitConfirmationPanel.SetActive(false);
-            mainMenuPanel.SetActive(true);
-        }
+        quitConfirmationPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
     }
 
     private void QuitGame()

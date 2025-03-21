@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using System;
 
 public class SoundManager : MonoBehaviour
 {
@@ -11,18 +11,21 @@ public class SoundManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-    public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume)
+    public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform)
     {
         AudioSource audioSource = Instantiate(soundObject, spawnTransform.position, Quaternion.identity);
         audioSource.clip = audioClip;
-        audioSource.volume = volume;
+        audioSource.volume = SettingsManager.Instance.GetSFXVolume();
         audioSource.Play();
         float clipLength = audioClip.length;
-        
-        var copy = Instantiate(soundObject);
-        Destroy(copy, clipLength);
+        Destroy(audioSource.gameObject, clipLength);
     }
 }
