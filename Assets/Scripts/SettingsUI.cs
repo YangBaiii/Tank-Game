@@ -8,6 +8,8 @@ public class SettingsUI : MonoBehaviour
     [SerializeField] private Button saveButton;
     [SerializeField] private Button backButton;
 
+    public AudioClip buttonClickSound;
+
     void Start()
     {
         soundEffectSlider.value = SettingsManager.Instance.GetSFXVolume();
@@ -31,11 +33,13 @@ public class SettingsUI : MonoBehaviour
 
     private void OnSaveButtonClicked()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         SettingsManager.Instance.SaveSettings();
     }
 
     private void OnBackButtonClicked()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         SettingsManager.Instance.HideSettings();
     }
 } 

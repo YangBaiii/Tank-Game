@@ -22,6 +22,7 @@ public class StartInterface : MonoBehaviour
     [SerializeField] private int settingsSceneIndex = 2;
     [SerializeField] private int leaderboardsSceneIndex = 3;
 
+    public AudioClip buttonClickSound;
     private void Start()
     {
         // Add listeners to buttons
@@ -42,11 +43,13 @@ public class StartInterface : MonoBehaviour
 
     private void OnStartButtonClick()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         SceneManager.LoadScene(gameSceneIndex);
     }
 
     private void OnSettingsButtonClick()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         if (settingsPanel != null && mainMenuPanel != null)
         {
             mainMenuPanel.SetActive(false);
@@ -56,11 +59,13 @@ public class StartInterface : MonoBehaviour
 
     private void OnLeaderboardsButtonClick()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         SceneManager.LoadScene(leaderboardsSceneIndex);
     }
 
     private void OnQuitButtonClick()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         if (quitConfirmationPanel != null && mainMenuPanel != null)
         {
             mainMenuPanel.SetActive(false);
@@ -70,11 +75,13 @@ public class StartInterface : MonoBehaviour
 
     public void OnConfirmQuit()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         QuitGame();
     }
 
     public void OnCancelQuit()
     {
+        SoundManager.Instance.PlayUISound(buttonClickSound);
         quitConfirmationPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }

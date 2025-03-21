@@ -11,7 +11,6 @@ public class SoundManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -23,7 +22,17 @@ public class SoundManager : MonoBehaviour
     {
         AudioSource audioSource = Instantiate(soundObject, spawnTransform.position, Quaternion.identity);
         audioSource.clip = audioClip;
-        audioSource.volume = SettingsManager.Instance.GetSFXVolume();
+        audioSource.volume = SettingsManager.Instance != null ? SettingsManager.Instance.GetSFXVolume() : 1f;
+        audioSource.Play();
+        float clipLength = audioClip.length;
+        Destroy(audioSource.gameObject, clipLength);
+    }
+
+    public void PlayUISound(AudioClip audioClip)
+    {
+        AudioSource audioSource = Instantiate(soundObject);
+        audioSource.clip = audioClip;
+        audioSource.volume = SettingsManager.Instance != null ? SettingsManager.Instance.GetSFXVolume() : 1f;
         audioSource.Play();
         float clipLength = audioClip.length;
         Destroy(audioSource.gameObject, clipLength);
