@@ -146,3 +146,5 @@ MonoBehaviour:
   destructibleDamage: 2.5
   playerDamage: 1
   bulletHit: {fileID: 8300000, guid: 0047c3fdd67593146abeab2ae3f53359, type: 3}
+  explosionPrefab: {fileID: 7460001320583156643, guid: 564e0e1864f8db84f9fa30d984c01538, type: 3}
+  explosionSound: {fileID: 8300000, guid: 22c6c05b8b2bf094796f0c69446e73a1, type: 3}
