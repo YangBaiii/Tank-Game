@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,20 +5,20 @@ public class MapGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject destructiblePrefab;
     [SerializeField] private GameObject nonDestructiblePrefab;
-
+    
     private int destructibleCount = 15;
     private int nonDestructibleCount = 10;
+    private float minDistance = 3.0f;
 
-    private List<Vector2> occupiedPositions = new List<Vector2>(); // Tracks all obstacles
-    private float minDistance = 3.0f; // Minimum distance between any two obstacles
-
-    void Start()
+    public List<Vector2> occupiedPositions;
+    public void GenerateMap(List<Vector2> existingObjects)
     {
+        occupiedPositions = new List<Vector2>(existingObjects); // Copy pre-filled positions
         GenerateObstacles(destructiblePrefab, destructibleCount);
         GenerateObstacles(nonDestructiblePrefab, nonDestructibleCount);
     }
 
-    void GenerateObstacles(GameObject obstaclePrefab, int count)
+    private void GenerateObstacles(GameObject obstaclePrefab, int count)
     {
         int attempts = 0;
         int maxAttempts = 5000;
@@ -50,13 +49,13 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    bool IsValidPosition(Vector2 newPos)
+    private bool IsValidPosition(Vector2 newPos)
     {
         foreach (Vector2 existingPos in occupiedPositions)
         {
             if (Vector2.Distance(existingPos, newPos) < minDistance)
             {
-                return false; // Too close to another obstacle
+                return false;
             }
         }
         return true;
