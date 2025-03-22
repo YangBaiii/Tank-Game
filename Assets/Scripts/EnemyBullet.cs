@@ -6,6 +6,8 @@ public class EnemyBullet : MonoBehaviour
     public float destructibleDamage = 2.5f;
     public float playerDamage = 1f;
     public AudioClip bulletHit;
+    public GameObject explosionPrefab;
+    public AudioClip explosionSound;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +19,7 @@ public class EnemyBullet : MonoBehaviour
     void Update()
     {
         transform.position += transform.right * bulletSpeed * Time.deltaTime;
-        if (transform.position.x < -5 || transform.position.x > 20 || transform.position.y < -20 || transform.position.y > 20)
+        if (transform.position.x < -4 || transform.position.x > 20 || transform.position.y < -20 || transform.position.y > 20)
         {
             Destroy(gameObject);
         }
@@ -27,6 +29,8 @@ public class EnemyBullet : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
             HealthSystemForDummies playerHealth = collision.gameObject.GetComponent<HealthSystemForDummies>();
             if (playerHealth != null)
             {

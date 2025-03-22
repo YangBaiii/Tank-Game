@@ -112,8 +112,21 @@ public class PlayerController : MonoBehaviour
         bool characterIsDead = !isAlive;
         if (characterIsDead)
         {
-            Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+            if (destroyPrefab != null)
+            {
+                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+            }
+            
+            if (destroyedSound != null && SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+            }
+
+            if (LivesManager.Instance != null)
+            {
+                LivesManager.Instance.LoseLife();
+            }
+            
             Destroy(gameObject);
         }
     }

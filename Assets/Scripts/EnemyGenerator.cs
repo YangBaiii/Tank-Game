@@ -39,8 +39,8 @@ public class EnemyGenerator : MonoBehaviour
 
         while (attempts < maxAttempts)
         {
-            float x = Random.Range(-3, 19);  
-            float y = Random.Range(-9, 12);
+            float x = Random.Range(-2, 18);  
+            float y = Random.Range(-8, 11);
             Vector2 randomPosition = new Vector2(x, y);
             if (IsValidPosition(randomPosition))
             {

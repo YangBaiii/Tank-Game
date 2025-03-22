@@ -8,7 +8,7 @@ public class MapGenerator : MonoBehaviour
     
     private int destructibleCount = 15;
     private int nonDestructibleCount = 10;
-    private float minDistance = 3.0f;
+    private float minDistance = 2.5f;
 
     public List<Vector2> occupiedPositions;
     public void GenerateMap(List<Vector2> existingObjects)
@@ -21,7 +21,7 @@ public class MapGenerator : MonoBehaviour
     private void GenerateObstacles(GameObject obstaclePrefab, int count)
     {
         int attempts = 0;
-        int maxAttempts = 5000;
+        int maxAttempts = 10000;
 
         for (int i = 0; i < count; i++)
         {
@@ -30,8 +30,8 @@ public class MapGenerator : MonoBehaviour
 
             do
             {
-                float x = Random.Range(-3, 19);  
-                float y = Random.Range(-9, 12);
+                float x = Random.Range(-2, 18);  
+                float y = Random.Range(-8, 11);
                 randomPos = new Vector2(x, y);
                 validPosition = IsValidPosition(randomPos);
 
