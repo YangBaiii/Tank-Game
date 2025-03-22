@@ -5,7 +5,7 @@ public class EnemyGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private MapGenerator mapGenerator;
-    [SerializeField] private int numberOfEnemies = 10;
+    [SerializeField] private int numberOfEnemies = 1;
     [SerializeField] private float minDistanceBetweenObjects = 2.5f;
     
     private Vector2 playerPosition = new Vector2(3f, 0f);

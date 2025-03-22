@@ -6,6 +6,8 @@ public class PlayerBullet : MonoBehaviour
     public float destructibleDamage = 5f;
     public float enemyDamage = 2f;
     public AudioClip bulletHit;
+    public GameObject explosionPrefab;
+    public AudioClip explosionSound;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +43,8 @@ public class PlayerBullet : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Enemy"))
         {
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
             HealthSystemForDummies enemyHealth = collision.gameObject.GetComponent<HealthSystemForDummies>();
             if (enemyHealth != null)
             {

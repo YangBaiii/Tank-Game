@@ -12,10 +12,6 @@ public class SoundManager : MonoBehaviour
         {
             Instance = this;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
     }
 
     public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform)

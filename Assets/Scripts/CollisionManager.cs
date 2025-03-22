@@ -20,10 +20,6 @@ public class CollisionManager : MonoBehaviour
         {
             HandleEnemyCollision(collision);
         }
-        else if (collision.gameObject.CompareTag("Destructible") || collision.gameObject.CompareTag("UnDestructible"))
-        {
-            HandleObstaclesCollision(collision);
-        }
         else if (collision.gameObject.CompareTag("EnemyBullet"))
         {
             HandleEnemyBulletCollision(collision);
@@ -32,12 +28,11 @@ public class CollisionManager : MonoBehaviour
 
     private void HandleEnemyCollision(Collider2D collision)
     {
-        // Both player and enemy take 5 damage
-        healthSystem.AddToCurrentHealth(-5f);
+        healthSystem.AddToCurrentHealth(-2f);
         HealthSystemForDummies enemyHealth = collision.gameObject.GetComponent<HealthSystemForDummies>();
         if (enemyHealth != null)
         {
-            enemyHealth.AddToCurrentHealth(-5f);
+            enemyHealth.AddToCurrentHealth(-2f);
         }
 
         if (!healthSystem.IsAlive)
@@ -65,35 +60,6 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
-    private void HandleObstaclesCollision(Collider2D collision)
-    {
-        bool isDestructible = collision.gameObject.CompareTag("Destructible");
-        
-        // Both player and obstacle take 5 damage
-        healthSystem.AddToCurrentHealth(-5f);
-        
-        if (isDestructible)
-        {
-            DestructibleObject destructible = collision.gameObject.GetComponent<DestructibleObject>();
-            if (destructible != null)
-            {
-                destructible.TakeDamage(5f);
-            }
-        }
-
-        if (!healthSystem.IsAlive)
-        {
-            Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
-        }
-    }
-
     private void HandleEnemyBulletCollision(Collider2D collision)
     {
         if (gameObject.CompareTag("Player"))
@@ -116,7 +82,7 @@ public class CollisionManager : MonoBehaviour
             DestructibleObject destructible = gameObject.GetComponent<DestructibleObject>();
             if (destructible != null)
             {
-                destructible.TakeDamage(2.5f);
+                destructible.TakeDamage(2f);
             }
         }
         Destroy(collision.gameObject);

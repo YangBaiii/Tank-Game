@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     public float maxSprintDuration = 5f; // Maximum sprint duration
     public float sprintCooldown = 1.5f;  // Cooldown before sprint can be used again
     public float remainingSprintTime;    // Stores remaining sprint time
+    public GameObject destroyPrefab;
+    public AudioClip destroyedSound;
     public AudioClip shootSound;
 
     public UnityEvent<float> OnSprintTimeChanged;
@@ -27,6 +29,7 @@ public class PlayerController : MonoBehaviour
     {
         playerSpeed = normalSpeed;
         healthSystem = GetComponent<HealthSystemForDummies>();
+        healthSystem.OnIsAliveChanged.AddListener(PlayDestroyedAnimation);
         healthSystem.CurrentHealth = maxHealth;
         remainingSprintTime = maxSprintDuration;
         if (OnSprintTimeChanged == null)
@@ -102,5 +105,16 @@ public class PlayerController : MonoBehaviour
         remainingSprintTime = maxSprintDuration;
         OnSprintTimeChanged.Invoke(remainingSprintTime);
         canSprint = true;
+    }
+    
+    public void PlayDestroyedAnimation(bool isAlive)
+    {
+        bool characterIsDead = !isAlive;
+        if (characterIsDead)
+        {
+            Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+            Destroy(gameObject);
+        }
     }
 }

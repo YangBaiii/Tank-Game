@@ -20,14 +20,12 @@ public class DestructibleObject : MonoBehaviour
         
         if (currentHealth <= 0)
         {
-            // Object is destroyed
             Instantiate(destroyPrefab, transform.position, Quaternion.identity);
             SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
             Destroy(gameObject);
         }
         else
         {
-            // Object is damaged but not destroyed
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         }
     }
