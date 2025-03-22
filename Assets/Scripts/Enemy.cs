@@ -15,12 +15,14 @@ public class Enemy : MonoBehaviour
     public GameObject destroyPrefab;
     public AudioClip destroyedSound;
 
-    private float minSpawnDelay = 0f;
-    private float maxSpawnDelay = 0.5f;
+    private float minSpawnDelay = 0.5f;
+    private float maxSpawnDelay = 1f;
     private float spawnDelay;
     private float bulletDetectionRadius = 5f;
     private float dodgeSpeed = 4f;
     private float dodgeDuration = 0.5f;
+    private float dodgeCooldown = 1.5f;
+    private float lastDodgeTime = 0f;
     private bool isDodging = false;
     private Vector2 dodgeDirection;
     private float dodgeTimer = 0f;
@@ -97,6 +99,7 @@ public class Enemy : MonoBehaviour
         if (dodgeTimer >= dodgeDuration)
         {
             isDodging = false;
+            lastDodgeTime = Time.time;
         }
     }
 
@@ -133,6 +136,11 @@ public class Enemy : MonoBehaviour
 
     void CheckForBullets()
     {
+        if (Time.time - lastDodgeTime < dodgeCooldown)
+        {
+            return;
+        }
+
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, bulletDetectionRadius);
         foreach (Collider2D collider in colliders)
         {
@@ -140,11 +148,9 @@ public class Enemy : MonoBehaviour
             {
                 Vector2 bulletDirection = (collider.transform.position - transform.position).normalized;
                 
-                // Calculate a more natural dodge angle (30 degrees)
                 float dodgeAngle = 30f * Mathf.Deg2Rad;
                 float randomSign = Random.value > 0.5f ? 1f : -1f;
                 
-                // Calculate dodge direction using rotation matrix
                 float cos = Mathf.Cos(dodgeAngle);
                 float sin = Mathf.Sin(dodgeAngle) * randomSign;
                 dodgeDirection = new Vector2(
@@ -170,18 +176,15 @@ public class Enemy : MonoBehaviour
         float currentAngle = transform.eulerAngles.z;
         float angleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
         
-        // If the difference is small enough, snap to target
         if (Mathf.Abs(angleDifference) < 1f)
         {
             transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             return;
         }
 
-        // Calculate rotation direction (clockwise or counterclockwise)
         float rotationDirection = Mathf.Sign(angleDifference);
         float newAngle = currentAngle + rotationDirection * rotationSpeed * Time.deltaTime;
         
-        // Normalize the angle to 0-360 range
         newAngle = newAngle % 360f;
         if (newAngle < 0) newAngle += 360f;
         
@@ -191,7 +194,6 @@ public class Enemy : MonoBehaviour
     void GenerateRandomAngle()
     {
         randomAngle = angles[Random.Range(0, angles.Length)];
-        // Add a small random offset (-15 to +15 degrees)
         randomAngle += Random.Range(-15, 16);
         targetAngle = randomAngle;
         SmoothRotation();
@@ -214,10 +216,8 @@ public class Enemy : MonoBehaviour
     {
         if (!isAlive)
         {
-            // Stop any ongoing coroutines
             StopAllCoroutines();
             
-            // Play destruction effects
             if (destroyPrefab != null)
             {
                 Instantiate(destroyPrefab, transform.position, Quaternion.identity);
@@ -228,7 +228,6 @@ public class Enemy : MonoBehaviour
                 SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
             }
             
-            // Destroy the game object
             Destroy(gameObject);
         }
     }
