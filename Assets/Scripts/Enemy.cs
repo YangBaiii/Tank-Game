@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
     public GameObject destroyPrefab;
     public AudioClip destroyedSound;
 
-    private float minSpawnDelay = 0.5f;
+    private float minSpawnDelay = 0f;
     private float maxSpawnDelay = 1f;
     private float spawnDelay;
     private float bulletDetectionRadius = 5f;
