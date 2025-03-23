@@ -39,9 +39,9 @@ public class LivesManager : MonoBehaviour
         heartObjects = new GameObject[maxLives];
 
         float startX = -15f;
-        float startY = 2f;
+        float startY = 1.5f;
         float spacingX = 2f; // Adjust for horizontal spacing
-        float spacingY = 3f; // Adjust for row spacing
+        float spacingY = 2.5f; // Adjust for row spacing
 
         for (int i = 0; i < maxLives; i++)
         {

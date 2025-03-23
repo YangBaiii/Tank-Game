@@ -19,7 +19,7 @@ public class EnemyBullet : MonoBehaviour
     void Update()
     {
         transform.position += transform.right * bulletSpeed * Time.deltaTime;
-        if (transform.position.x < -4 || transform.position.x > 20 || transform.position.y < -20 || transform.position.y > 20)
+        if (transform.position.x < -4 || transform.position.x > 19.5 || transform.position.y < -9.3 || transform.position.y > 12.4)
         {
             Destroy(gameObject);
         }

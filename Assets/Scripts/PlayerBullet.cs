@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
-    private float bulletSpeed = 10f;
+    private float bulletSpeed = 12f;
     public float destructibleDamage = 2f;
     public float enemyDamage = 10f;
     public AudioClip bulletHit;
@@ -18,7 +18,7 @@ public class PlayerBullet : MonoBehaviour
     void Update()
     {
         transform.position += transform.right * bulletSpeed * Time.deltaTime;
-        if (transform.position.x < -4 || transform.position.x > 20 || transform.position.y < -20 || transform.position.y > 20)
+        if (transform.position.x < -4 || transform.position.x > 19.5 || transform.position.y < -9.3 || transform.position.y > 12.4)
         {
             Destroy(gameObject);
         }

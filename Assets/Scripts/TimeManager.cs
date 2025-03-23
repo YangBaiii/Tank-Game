@@ -1,31 +1,108 @@
 using UnityEngine;
-using UnityEngine.UI;  
+using UnityEngine.UI;
+using System.Collections;
+using TMPro;
 
 public class TimeManager : MonoBehaviour
 {
-    public Text timeText;   
-    private float timeRemaining = 300f;  
+    public static TimeManager Instance { get; private set; }
+    
+    [SerializeField] private TextMeshPro timeText;
+    [SerializeField] private float gameTime = 0f; 
+    [SerializeField] private bool isGameActive = true;
+    
+    private float currentTime;
+    private bool isPaused = false;
+    private float pauseStartTime;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
+        currentTime = gameTime;
         UpdateTimeDisplay();
     }
 
     void Update()
     {
-        
-        if (timeRemaining > 0)
+        if (isGameActive && !isPaused)
         {
-            timeRemaining -= Time.deltaTime;
+            currentTime += Time.deltaTime;
             UpdateTimeDisplay();
         }
     }
 
     void UpdateTimeDisplay()
     {
-        int minutes = Mathf.FloorToInt(timeRemaining / 60);
-        int seconds = Mathf.FloorToInt(timeRemaining % 60);
+        if (timeText != null)
+        {
+            int minutes = Mathf.FloorToInt(currentTime / 60);
+            int seconds = Mathf.FloorToInt(currentTime % 60);
+            timeText.text = string.Format("{0:00} {1:00}", minutes, seconds);
+        }
+    }
 
-        timeText.text = minutes.ToString("00") + ":" + seconds.ToString("00");
+    public void PauseGame()
+    {
+        if (!isPaused)
+        {
+            isPaused = true;
+            pauseStartTime = Time.time;
+        }
+    }
+
+    public void ResumeGame()
+    {
+        if (isPaused)
+        {
+            isPaused = false;
+            float pauseDuration = Time.time - pauseStartTime;
+            currentTime += pauseDuration;
+        }
+    }
+
+    public void StartGame()
+    {
+        isGameActive = true;
+        currentTime = gameTime;
+        UpdateTimeDisplay();
+    }
+
+    public void StopGame()
+    {
+        isGameActive = false;
+    }
+
+    private void GameOver()
+    {
+        isGameActive = false;
+        Debug.Log("Game Over - Time's Up!");
+        // Add your game over logic here
+    }
+
+    public float GetCurrentTime()
+    {
+        return currentTime;
+    }
+
+    public bool IsGameActive()
+    {
+        return isGameActive;
+    }
+
+    public bool IsPaused()
+    {
+        return isPaused;
     }
 }

@@ -227,6 +227,12 @@ public class Enemy : MonoBehaviour
             {
                 SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
             }
+
+            // Add score when enemy is destroyed
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.AddScore();
+            }
             
             Destroy(gameObject);
         }

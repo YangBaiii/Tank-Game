@@ -43,61 +43,27 @@ public class CollisionManager : MonoBehaviour
 
         if (!healthSystem.IsAlive)
         {
-            if (destroyPrefab != null)
-            {
-                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-            }
-            
-            if (destroyedSound != null && SoundManager.Instance != null)
-            {
-                SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
-            }
-
-            if (LivesManager.Instance != null)
-            {
-                LivesManager.Instance.LoseLife();
-            }
-            
+            Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+            LivesManager.Instance.LoseLife();
             Destroy(gameObject);
         }
         else
         {
-            if (explosionPrefab != null)
-            {
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            }
-            
-            if (explosionSound != null && SoundManager.Instance != null)
-            {
-                SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
-            }
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
         }
 
         if (enemyHealth != null && !enemyHealth.IsAlive)
         {
-            if (destroyPrefab != null)
-            {
-                Instantiate(destroyPrefab, collision.transform.position, Quaternion.identity);
-            }
-            
-            if (destroyedSound != null && SoundManager.Instance != null)
-            {
-                SoundManager.Instance.PlaySoundFXClip(destroyedSound, collision.transform);
-            }
-            
+            Instantiate(destroyPrefab, collision.transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(destroyedSound, collision.transform);
             Destroy(collision.gameObject);
         }
         else
         {
-            if (explosionPrefab != null)
-            {
-                Instantiate(explosionPrefab, collision.transform.position, Quaternion.identity);
-            }
-            
-            if (explosionSound != null && SoundManager.Instance != null)
-            {
-                SoundManager.Instance.PlaySoundFXClip(explosionSound, collision.transform);
-            }
+            Instantiate(explosionPrefab, collision.transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(explosionSound, collision.transform);
         }
     }
 
@@ -108,43 +74,22 @@ public class CollisionManager : MonoBehaviour
             healthSystem.AddToCurrentHealth(-1f);
             if (!healthSystem.IsAlive)
             {
-                if (destroyPrefab != null)
-                {
-                    Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-                }
-                
-                if (destroyedSound != null && SoundManager.Instance != null)
-                {
-                    SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
-                }
+                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+                SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+                LivesManager.Instance.LoseLife();
 
-                if (LivesManager.Instance != null)
-                {
-                    LivesManager.Instance.LoseLife();
-                }
-                
                 Destroy(gameObject);
             }
             else
             {
-                if (explosionPrefab != null)
-                {
-                    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-                }
-                
-                if (explosionSound != null && SoundManager.Instance != null)
-                {
-                    SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
-                }
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
             }
         }
         else if (gameObject.CompareTag("Destructible"))
         {
             DestructibleObject destructible = gameObject.GetComponent<DestructibleObject>();
-            if (destructible != null)
-            {
-                destructible.TakeDamage(2f);
-            }
+            destructible.TakeDamage(2f);
         }
         Destroy(collision.gameObject);
     }
