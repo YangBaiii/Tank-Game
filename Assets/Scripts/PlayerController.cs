@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private float sprintSpeed = 5f;
     private float playerSpeed;
     private float maxHealth = 30f;
+    private bool isPaused = false;
     public bool canSprint = true;
     public bool isSprinting = false;
 
@@ -38,10 +39,27 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        MovePlayer();
-        RotateTowardsMouse();
-        ShootBullet();
-        HandleSprint();
+        HandlePause();
+        if (!isPaused)
+        {
+            MovePlayer();
+            RotateTowardsMouse();
+            ShootBullet();
+            HandleSprint();
+        }
+    }
+
+    void HandlePause()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PauseManager.Instance.TogglePause();
+        }
+    }
+    
+    public void SetPaused(bool pauseState)
+    {
+        isPaused = pauseState;
     }
 
     void MovePlayer()

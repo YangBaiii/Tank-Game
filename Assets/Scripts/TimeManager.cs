@@ -7,7 +7,7 @@ public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance { get; private set; }
     
-    [SerializeField] private TextMeshPro timeText;
+    [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private float gameTime = 0f; 
     [SerializeField] private bool isGameActive = true;
     

@@ -1,14 +1,16 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CursorManager : MonoBehaviour
 {
-    public static CursorManager Instance;
-    [SerializeField] private Texture2D cursorTexture;
-    private Vector2 cursorHotSpot;
-    private Texture2D modifiedCursor; 
+    public static CursorManager Instance { get; private set; }
 
-    void Awake()
+    [SerializeField] private Texture2D customCursor;
+    [SerializeField] private Texture2D defaultCursor;
+    [SerializeField] private Vector2 cursorHotspot = new Vector2(24, 24);
+
+    private void Awake()
     {
         if (Instance == null)
         {
@@ -21,53 +23,45 @@ public class CursorManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
-        cursorHotSpot = new Vector2(24, 24); // Center for 48x48
-        cursorTexture = ResizeTexture(cursorTexture, 48, 48);
-        Cursor.SetCursor(cursorTexture, cursorHotSpot, CursorMode.Auto);
+        SetCustomCursor();
+    }
+
+    public void SetCustomCursor()
+    {
+        if (customCursor != null)
+        {
+            Cursor.SetCursor(customCursor, cursorHotspot, CursorMode.Auto);
+        }
+    }
+
+    public void SetDefaultCursor()
+    {
+        Cursor.SetCursor(defaultCursor, cursorHotspot, CursorMode.Auto);
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
     public void OnShoot()
     {
-        if (Instance != null)
-        {
-            StartCoroutine(FlashRedCursor());
-        }
+        StartCoroutine(FlashRedCursor());
     }
 
-    private IEnumerator FlashRedCursor()
+    private System.Collections.IEnumerator FlashRedCursor()
     {
-        modifiedCursor = TintTexture(cursorTexture, Color.red);
-        Cursor.SetCursor(modifiedCursor, cursorHotSpot, CursorMode.Auto);
-        yield return new WaitForSeconds(0.1f);
-        Cursor.SetCursor(cursorTexture, cursorHotSpot, CursorMode.Auto);
-    }
-
-    private Texture2D TintTexture(Texture2D original, Color color)
-    {
-        Texture2D tinted = new Texture2D(original.width, original.height);
-        for (int x = 0; x < original.width; x++)
-        {
-            for (int y = 0; y < original.height; y++)
+        Color[] colors = customCursor.GetPixels();
+            Color[] redColors = new Color[colors.Length];
+            for (int i = 0; i < colors.Length; i++)
             {
-                Color originalColor = original.GetPixel(x, y);
-                tinted.SetPixel(x, y, new Color(color.r, color.g, color.b, originalColor.a));
+                redColors[i] = new Color(1, 0, 0, colors[i].a);
             }
-        }
-        tinted.Apply();
-        return tinted;
-    }
+            Texture2D redCursor = new Texture2D(customCursor.width, customCursor.height);
+            redCursor.SetPixels(redColors);
+            redCursor.Apply();
+            Cursor.SetCursor(redCursor, cursorHotspot, CursorMode.Auto);
 
-    private Texture2D ResizeTexture(Texture2D source, int width, int height)
-    {
-        RenderTexture rt = new RenderTexture(width, height, 32);
-        Graphics.Blit(source, rt);
-        Texture2D result = new Texture2D(width, height);
-        RenderTexture.active = rt;
-        result.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-        result.Apply();
-        RenderTexture.active = null;
-        return result;
+            yield return new WaitForSeconds(0.1f);
+
+        SetCustomCursor();
     }
 }

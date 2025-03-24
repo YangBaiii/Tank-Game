@@ -5,7 +5,7 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance { get; private set; }
 
-    [SerializeField] private TextMeshPro scoreText;
+    [SerializeField] private TextMeshProUGUI scoreText;
     private int currentScore = 0;
     private int pointsPerEnemy = 20;
 
