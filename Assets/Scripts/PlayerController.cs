@@ -149,4 +149,9 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void TakeDamage(float amount)
+    {
+        healthSystem.AddToCurrentHealth(-amount);
+    }
 }

@@ -95,6 +95,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1614768868789991847, guid: 467d703835d044cb4a8a38c24aa1bc79, type: 3}
+      propertyPath: m_Color.b
+      value: 0.123268016
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614768868789991847, guid: 467d703835d044cb4a8a38c24aa1bc79, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6758854
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614768868789991847, guid: 467d703835d044cb4a8a38c24aa1bc79, type: 3}
+      propertyPath: m_Color.r
+      value: 0.7509433
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614768870270142966, guid: 467d703835d044cb4a8a38c24aa1bc79, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614768870270142966, guid: 467d703835d044cb4a8a38c24aa1bc79, type: 3}
+      propertyPath: m_Color.b
+      value: 0.81960785
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614768870270142966, guid: 467d703835d044cb4a8a38c24aa1bc79, type: 3}
+      propertyPath: m_Color.g
+      value: 0.8862745
+      objectReference: {fileID: 0}
+    - target: {fileID: 1614768870270142966, guid: 467d703835d044cb4a8a38c24aa1bc79, type: 3}
+      propertyPath: m_Color.r
+      value: 0.9764706
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -134,6 +162,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96592cccd32b6a744a70ab13bf99844f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canSprint: 1
+  isSprinting: 0
+  maxSprintDuration: 5
+  sprintCooldown: 1.5
+  remainingSprintTime: 0
+  destroyPrefab: {fileID: 0}
+  destroyedSound: {fileID: 0}
+  shootSound: {fileID: 0}
+  OnSprintTimeChanged:
+    m_PersistentCalls:
+      m_Calls: []
   bulletPrefab: {fileID: 8199482963067850542, guid: f10d5a5323239a047a99c098ee9c2f21, type: 3}
   bulletSpawnPoint: {fileID: 8398664275688755454}
 --- !u!50 &2850590800769081222
