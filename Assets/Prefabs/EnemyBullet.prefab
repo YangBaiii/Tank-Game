@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6327919013531643542}
   - component: {fileID: 8663415760434203721}
   - component: {fileID: 8730061745185027953}
+  - component: {fileID: -1492449246150346320}
   m_Layer: 0
   m_Name: EnemyBullet
   m_TagString: EnemyBullet
@@ -148,3 +149,30 @@ MonoBehaviour:
   bulletHit: {fileID: 8300000, guid: 0047c3fdd67593146abeab2ae3f53359, type: 3}
   explosionPrefab: {fileID: 7460001320583156643, guid: 564e0e1864f8db84f9fa30d984c01538, type: 3}
   explosionSound: {fileID: 8300000, guid: 22c6c05b8b2bf094796f0c69446e73a1, type: 3}
+--- !u!50 &-1492449246150346320
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3629698625429355520}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
