@@ -40,7 +40,6 @@ public class EnemyBullet : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Destructible"))
         {
-            Debug.Log(111);
             SoundManager.Instance.PlaySoundFXClip(bulletHit, transform);
             DestructibleObject destructible = collision.gameObject.GetComponent<DestructibleObject>();
             if (destructible != null)
@@ -51,7 +50,6 @@ public class EnemyBullet : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("UnDestructible"))
         {
-            Debug.Log(111);
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             SoundManager.Instance.PlaySoundFXClip(bulletHit, transform);
             Destroy(gameObject);

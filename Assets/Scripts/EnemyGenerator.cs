@@ -5,6 +5,7 @@ public class EnemyGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private MapGenerator mapGenerator;
+    [SerializeField] private PropSpawner propSpawner ;
     [SerializeField] private int numberOfEnemies = 1;
     [SerializeField] private float minDistanceBetweenObjects = 2.5f;
     
@@ -15,10 +16,8 @@ public class EnemyGenerator : MonoBehaviour
     {
         occupiedPositions.Add(playerPosition);
         GenerateEnemies();
-        if (mapGenerator != null)
-        {
-            mapGenerator.GenerateMap(occupiedPositions);
-        }
+        mapGenerator.GenerateMap(occupiedPositions);
+        propSpawner.GenerateMap(occupiedPositions);
     }
 
     private void GenerateEnemies()

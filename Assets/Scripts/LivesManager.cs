@@ -77,4 +77,9 @@ public class LivesManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
         Instantiate(playerPrefab, respawnPosition, Quaternion.identity);
     }
+
+    public void RestoreHealth(float healthRestore)
+    {
+        currentLives++;
+    }
 }

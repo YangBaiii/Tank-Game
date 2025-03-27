@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
+    public static PlayerBullet Instance;
     private float bulletSpeed = 12f;
     public float destructibleDamage = 2f;
-    public float enemyDamage = 10f;
+    public float enemyDamage = 5f;
     public AudioClip bulletHit;
     public GameObject explosionPrefab;
     public AudioClip explosionSound;
+    private Coroutine powerIncreaseCoroutine;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,5 +54,10 @@ public class PlayerBullet : MonoBehaviour
             }
             Destroy(gameObject);
         }
+    }
+    
+    public void IncreaseAttackPower(float multiplier)
+    {
+        enemyDamage *= multiplier;
     }
 }
