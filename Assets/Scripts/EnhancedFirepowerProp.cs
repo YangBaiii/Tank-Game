@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnhancedFirepowerProp : MonoBehaviour
 {
-    [SerializeField] private float powerIncrease = 15f;
+    [SerializeField] private float powerIncrease = 1.5f;
     [SerializeField] protected AudioClip collectSound;
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
@@ -14,7 +14,7 @@ public class EnhancedFirepowerProp : MonoBehaviour
     }
     private void OnCollect()
     {
-        PlayerBullet.Instance.IncreaseAttackPower(powerIncrease);
+        PlayerController.Instance.currentAttackPower = powerIncrease;
         SoundManager.Instance.PlaySoundFXClip(collectSound, transform);
         Destroy(gameObject);
     }

@@ -50,7 +50,6 @@ public class EnemyBullet : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("UnDestructible"))
         {
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             SoundManager.Instance.PlaySoundFXClip(bulletHit, transform);
             Destroy(gameObject);
         }

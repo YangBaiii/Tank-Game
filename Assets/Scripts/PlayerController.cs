@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance;
     private float normalSpeed = 2.5f;
     private float sprintSpeed = 5f;
     private float playerSpeed;
@@ -12,6 +13,10 @@ public class PlayerController : MonoBehaviour
     private bool isPaused = false;
     public bool canSprint = true;
     public bool isSprinting = false;
+    public float currentAttackPower = 1f;
+    private Coroutine powerIncreaseCoroutine;
+    private float fireRate = 0.1f;
+    private float nextFireTime = 0f;
 
     public float maxSprintDuration = 5f; // Maximum sprint duration
     public float sprintCooldown = 1.5f;  // Cooldown before sprint can be used again
@@ -25,6 +30,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] Transform bulletSpawnPoint;
     HealthSystemForDummies healthSystem;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -44,8 +54,8 @@ public class PlayerController : MonoBehaviour
         {
             MovePlayer();
             RotateTowardsMouse();
-            ShootBullet();
             HandleSprint();
+            ShootBullet();
         }
     }
 
@@ -78,13 +88,23 @@ public class PlayerController : MonoBehaviour
 
     void ShootBullet()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0) && Time.time >= nextFireTime)
         {
-            Instantiate(bulletPrefab, bulletSpawnPoint.position, transform.rotation);
-            CursorManager.Instance.OnShoot();
-            if (shootSound != null && SoundManager.Instance != null)
+            if (bulletPrefab != null && bulletSpawnPoint != null)
             {
-                SoundManager.Instance.PlaySoundFXClip(shootSound, transform);
+                GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, transform.rotation);
+                PlayerBullet bulletScript = bullet.GetComponent<PlayerBullet>();
+                if (bulletScript != null)
+                {
+                    bulletScript.enemyDamage *= currentAttackPower;
+                    bulletScript.destructibleDamage *= currentAttackPower;
+                }
+                nextFireTime = Time.time + fireRate;
+                CursorManager.Instance.OnShoot();
+                if (shootSound != null && SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlaySoundFXClip(shootSound, transform);
+                }
             }
         }
     }
@@ -153,5 +173,30 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float amount)
     {
         healthSystem.AddToCurrentHealth(-amount);
+    }
+
+    public void IncreaseAttackPower(float multiplier, float duration)
+    {
+        if (powerIncreaseCoroutine != null)
+        {
+            StopCoroutine(powerIncreaseCoroutine);
+        }
+        powerIncreaseCoroutine = StartCoroutine(PowerIncreaseRoutine(multiplier, duration));
+    }
+
+    private IEnumerator PowerIncreaseRoutine(float multiplier, float duration)
+    {
+        currentAttackPower = multiplier;
+        yield return new WaitForSeconds(duration);
+        currentAttackPower = 1f;
+        powerIncreaseCoroutine = null;
+    }
+
+    public void RestoreHealth(float amount)
+    {
+        if (healthSystem != null)
+        {
+            healthSystem.CurrentHealth = Mathf.Min(healthSystem.CurrentHealth + amount, maxHealth);
+        }
     }
 }

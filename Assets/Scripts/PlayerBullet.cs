@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
-    public static PlayerBullet Instance;
     private float bulletSpeed = 12f;
     public float destructibleDamage = 2f;
     public float enemyDamage = 5f;
@@ -54,10 +53,5 @@ public class PlayerBullet : MonoBehaviour
             }
             Destroy(gameObject);
         }
-    }
-    
-    public void IncreaseAttackPower(float multiplier)
-    {
-        enemyDamage *= multiplier;
     }
 }

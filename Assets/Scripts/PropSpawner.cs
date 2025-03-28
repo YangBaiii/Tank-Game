@@ -6,17 +6,17 @@ public class PropSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject enhancedFirepowerPrefab;
     [SerializeField] private GameObject bloodPackPrefab;
-    private float minDistance = 2.5f;
+    private float minDistance = 3f;
 
     public List<Vector2> occupiedPositions;
     public void GenerateMap(List<Vector2> existingObjects)
     {
-        occupiedPositions = new List<Vector2>(existingObjects); // Copy pre-filled positions
+        occupiedPositions = new List<Vector2>(existingObjects); 
         GenerateProps(enhancedFirepowerPrefab, 1);
         GenerateProps(bloodPackPrefab, 1);
     }
 
-    private void GenerateProps(GameObject obstaclePrefab, int count)
+    private void GenerateProps(GameObject Prefab, int count)
     {
         int attempts = 0;
         int maxAttempts = 10000;
@@ -43,7 +43,7 @@ public class PropSpawner : MonoBehaviour
             } while (!validPosition);
 
             occupiedPositions.Add(randomPos);
-            Instantiate(obstaclePrefab, randomPos, Quaternion.identity);
+            Instantiate(Prefab, randomPos, Quaternion.identity);
         }
     }
 

@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using Unity.Mathematics;
 
 public class LivesManager : MonoBehaviour
 {
@@ -29,14 +31,14 @@ public class LivesManager : MonoBehaviour
     private void Start()
     {
         currentLives = maxLives;
-        CreateHearts();
+        CreateHearts(maxLives);
     }
 
-    private void CreateHearts()
+    private void CreateHearts(int max)
     {
         if (heartPrefab == null) return;
 
-        heartObjects = new GameObject[maxLives];
+        heartObjects = new GameObject[max];
 
         float startX = -15f;
         float startY = 1.5f;
@@ -59,8 +61,7 @@ public class LivesManager : MonoBehaviour
         if (currentLives > 0)
         {
             currentLives--;
-            heartObjects[currentLives].SetActive(false); // Hide last heart
-            
+            heartObjects[currentLives].SetActive(false); 
             if (currentLives > 0)
             {
                 StartCoroutine(RespawnPlayer());
@@ -78,8 +79,9 @@ public class LivesManager : MonoBehaviour
         Instantiate(playerPrefab, respawnPosition, Quaternion.identity);
     }
 
-    public void RestoreHealth(float healthRestore)
+    public void RestoreHealth(int healthRestore)
     {
-        currentLives++;
+        currentLives+=healthRestore;
+        CreateHearts(Math.Max(currentLives+1, maxLives));
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BloodPackProp : MonoBehaviour
 {
-    [SerializeField] private float healthRestore = 1f;
+    [SerializeField] private int healthRestore = 1;
     [SerializeField] protected AudioClip collectSound;
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
