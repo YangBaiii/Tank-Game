@@ -148,24 +148,11 @@ public class PlayerController : MonoBehaviour
     
     public void PlayDestroyedAnimation(bool isAlive)
     {
-        bool characterIsDead = !isAlive;
-        if (characterIsDead)
+        if (!isAlive)
         {
-            if (destroyPrefab != null)
-            {
-                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-            }
-            
-            if (destroyedSound != null && SoundManager.Instance != null)
-            {
-                SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
-            }
-
-            if (LivesManager.Instance != null)
-            {
-                LivesManager.Instance.LoseLife();
-            }
-            
+            Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+            LivesManager.Instance.LoseLife();
             Destroy(gameObject);
         }
     }
@@ -175,28 +162,11 @@ public class PlayerController : MonoBehaviour
         healthSystem.AddToCurrentHealth(-amount);
     }
 
-    public void IncreaseAttackPower(float multiplier, float duration)
-    {
-        if (powerIncreaseCoroutine != null)
-        {
-            StopCoroutine(powerIncreaseCoroutine);
-        }
-        powerIncreaseCoroutine = StartCoroutine(PowerIncreaseRoutine(multiplier, duration));
-    }
-
     private IEnumerator PowerIncreaseRoutine(float multiplier, float duration)
     {
         currentAttackPower = multiplier;
         yield return new WaitForSeconds(duration);
         currentAttackPower = 1f;
         powerIncreaseCoroutine = null;
-    }
-
-    public void RestoreHealth(float amount)
-    {
-        if (healthSystem != null)
-        {
-            healthSystem.CurrentHealth = Mathf.Min(healthSystem.CurrentHealth + amount, maxHealth);
-        }
     }
 }

@@ -2,20 +2,32 @@ using UnityEngine;
 
 public class BloodPackProp : MonoBehaviour
 {
-    [SerializeField] private int healthRestore = 1;
-    [SerializeField] protected AudioClip collectSound;
+    [SerializeField] private float despawnTime = 10f;
+    [SerializeField] private GameObject collectEffectPrefab;
+    [SerializeField] private AudioClip collectSound;
 
-    protected virtual void OnTriggerEnter2D(Collider2D other)
+    private bool isCollected = false; // Prevent multiple triggers
+
+    private void Start()
     {
-        if (other.CompareTag("Player"))
+        Destroy(gameObject, despawnTime);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!isCollected && other.CompareTag("Player"))
         {
-            OnCollect();
+            isCollected = true; // Prevent duplicate collection
+            PlayerController player = other.GetComponent<PlayerController>();
+            OnCollect(player);
         }
     }
-    private void OnCollect()
+
+    private void OnCollect(PlayerController player)
     {
-        LivesManager.Instance.RestoreHealth(healthRestore);
         SoundManager.Instance.PlaySoundFXClip(collectSound, transform);
         Destroy(gameObject);
+        LivesManager.Instance.AddLife();
+        Instantiate(collectEffectPrefab, transform.position, Quaternion.identity);
     }
-} 
+}

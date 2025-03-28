@@ -7,7 +7,7 @@ public class LivesManager : MonoBehaviour
 {
     public static LivesManager Instance { get; private set; }
     
-    [SerializeField] private int maxLives = 10;
+    private int maxLives = 10; // Initial max lives
     [SerializeField] private GameObject heartPrefab;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Vector3 respawnPosition = new Vector3(3f, 0f, 0f);
@@ -31,21 +31,20 @@ public class LivesManager : MonoBehaviour
     private void Start()
     {
         currentLives = maxLives;
-        CreateHearts(maxLives);
+        heartObjects = new GameObject[11]; // Allow up to 20 hearts dynamically
+        CreateHearts();
     }
 
-    private void CreateHearts(int max)
+    private void CreateHearts()
     {
         if (heartPrefab == null) return;
-
-        heartObjects = new GameObject[max];
 
         float startX = -15f;
         float startY = 1.5f;
         float spacingX = 2f; // Adjust for horizontal spacing
         float spacingY = 2.5f; // Adjust for row spacing
 
-        for (int i = 0; i < maxLives; i++)
+        for (int i = 0; i < currentLives; i++)
         {
             float x = startX + (i % 5) * spacingX;
             float y = startY - (i / 5) * spacingY;
@@ -61,7 +60,8 @@ public class LivesManager : MonoBehaviour
         if (currentLives > 0)
         {
             currentLives--;
-            heartObjects[currentLives].SetActive(false); 
+            UpdateHearts();
+
             if (currentLives > 0)
             {
                 StartCoroutine(RespawnPlayer());
@@ -73,15 +73,43 @@ public class LivesManager : MonoBehaviour
         }
     }
 
+    public void AddLife()
+    {
+        currentLives++; 
+        UpdateHearts();
+    }
+
+    private void UpdateHearts()
+    {
+        // If new heart needed, create it
+        if (heartObjects[currentLives - 1] == null)
+        {
+            float startX = -15f;
+            float startY = 1.5f;
+            float spacingX = 2f;
+            float spacingY = 2.5f;
+
+            float x = startX + ((currentLives - 1) % 5) * spacingX;
+            float y = startY - ((currentLives - 1) / 5) * spacingY;
+
+            GameObject newHeart = Instantiate(heartPrefab);
+            newHeart.transform.position = new Vector3(x, y, 0f);
+            heartObjects[currentLives - 1] = newHeart;
+        }
+
+        // Update heart visibility
+        for (int i = 0; i < heartObjects.Length; i++)
+        {
+            if (heartObjects[i] != null)
+            {
+                heartObjects[i].SetActive(i < currentLives);
+            }
+        }
+    }
+
     private IEnumerator RespawnPlayer()
     {
         yield return new WaitForSeconds(1f);
         Instantiate(playerPrefab, respawnPosition, Quaternion.identity);
-    }
-
-    public void RestoreHealth(int healthRestore)
-    {
-        currentLives+=healthRestore;
-        CreateHearts(Math.Max(currentLives+1, maxLives));
     }
 }

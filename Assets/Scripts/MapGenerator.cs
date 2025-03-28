@@ -8,7 +8,7 @@ public class MapGenerator : MonoBehaviour
     
     private int destructibleCount = 15;
     private int nonDestructibleCount = 10;
-    private float minDistance = 2.5f;
+    private float minDistance = 2f;
 
     public List<Vector2> occupiedPositions;
     public void GenerateMap(List<Vector2> existingObjects)
