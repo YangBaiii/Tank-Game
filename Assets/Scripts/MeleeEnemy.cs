@@ -1,28 +1,23 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class MeleeEnemy : MonoBehaviour
 {
     private float enemySpeed = 5f;
-    private int[] angles = { 0, 90, 180, 270};
-    private int randomAngle;
+    private int[] angles = { 0, 90, 180, 270 };
     private float maxHealth = 10f;
     private float damageAmount = 1f;
     private float damageInterval = 0.25f;
     private float lastDamageTime;
     private bool isCollidingWithPlayer = false;
     private PlayerController player;
-    
+
     [SerializeField] private GameObject destroyPrefab;
     [SerializeField] private AudioClip destroyedSound;
     [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private AudioClip explosionSound;
 
-    private float minSpawnDelay = 0f;
-    private float maxSpawnDelay = 1f;
-    private float spawnDelay;
     private float bulletDetectionRadius = 5f;
     private float dodgeSpeed = 4f;
     private float dodgeDuration = 0.5f;
@@ -31,55 +26,31 @@ public class MeleeEnemy : MonoBehaviour
     private bool isDodging = false;
     private Vector2 dodgeDirection;
     private float dodgeTimer = 0f;
-    
-    private float minX = -3f;
-    private float maxX = 19f;
-    private float minY = -9f;
-    private float maxY = 12f;
 
     private float rotationSpeed = 360f;
     private float targetAngle;
-    private float stuckTimer = 0.5f;
-    private float stuckThreshold = 1f;
     private Vector3 lastPosition;
-    
+    private float stuckTime = 0f;
+    private float stuckThreshold = 0.5f;
+
+    private Rigidbody2D rb;
+
     HealthSystemForDummies healthSystem;
-    
+
     void Start()
     {
         healthSystem = GetComponent<HealthSystemForDummies>();
         healthSystem.OnIsAliveChanged.AddListener(PlayDestroyedAnimation);
         healthSystem.CurrentHealth = maxHealth;
+        rb = GetComponent<Rigidbody2D>();
         targetAngle = transform.eulerAngles.z;
         lastPosition = transform.position;
         player = FindObjectOfType<PlayerController>();
-        
-        // Debug log to check if player is found
-        if (player == null)
-        {
-            Debug.LogWarning("Player not found in scene!");
-        }
+        GenerateRandomAngle();
     }
 
     void Update()
     {
-        // Check if stuck
-        if (Vector3.Distance(transform.position, lastPosition) < 0.01f)
-        {
-            stuckTimer += Time.deltaTime;
-            if (stuckTimer > stuckThreshold)
-            {
-                // Force a new random direction if stuck
-                GenerateRandomAngle();
-                stuckTimer = 0f;
-            }
-        }
-        else
-        {
-            stuckTimer = 0f;
-        }
-        lastPosition = transform.position;
-
         if (isDodging)
         {
             HandleDodgeMovement();
@@ -88,24 +59,21 @@ public class MeleeEnemy : MonoBehaviour
         {
             MoveForward();
             CheckForBullets();
+            HandleStuckDetection();
         }
+    }
+
+    void MoveForward()
+    {
+        rb.velocity = transform.right * enemySpeed;
     }
 
     void HandleDodgeMovement()
     {
-        Vector3 newPosition = transform.position + (Vector3)dodgeDirection * dodgeSpeed * Time.deltaTime;
-        if (IsWithinBoundaries(newPosition))
-        {
-            transform.position = newPosition;
-            targetAngle = Mathf.Atan2(dodgeDirection.y, dodgeDirection.x) * Mathf.Rad2Deg;
-            SmoothRotation();
-        }
-        else
-        {
-            isDodging = false;
-            GenerateRandomAngle();
-        }
-        
+        rb.velocity = dodgeDirection * dodgeSpeed;
+        targetAngle = Mathf.Atan2(dodgeDirection.y, dodgeDirection.x) * Mathf.Rad2Deg;
+        SmoothRotation();
+
         dodgeTimer += Time.deltaTime;
         if (dodgeTimer >= dodgeDuration)
         {
@@ -114,26 +82,30 @@ public class MeleeEnemy : MonoBehaviour
         }
     }
 
-    void MoveForward()
+    private void HandleStuckDetection()
     {
-        transform.Translate(Vector2.right * enemySpeed * Time.deltaTime);
-    }
-    
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Enemy")
-            || collision.gameObject.CompareTag("Destructible") || collision.gameObject.CompareTag("UnDestructible"))
+        if (Vector3.Distance(transform.position, lastPosition) < 0.05f)
         {
-            float currentAngle = transform.eulerAngles.z;
-            int newAngle;
-            do
+            stuckTime += Time.deltaTime;
+            if (stuckTime > stuckThreshold)
             {
                 GenerateRandomAngle();
-                newAngle = randomAngle;
+                stuckTime = 0f;
             }
-            while (Mathf.Approximately(newAngle, currentAngle));
+        }
+        else
+        {
+            stuckTime = 0f;
+        }
+        lastPosition = transform.position;
+    }
 
-            transform.rotation = Quaternion.Euler(0, 0, newAngle);
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Enemy") ||
+            collision.gameObject.CompareTag("Destructible") || collision.gameObject.CompareTag("UnDestructible"))
+        {
+            GenerateRandomAngle();
         }
         else if (collision.gameObject.CompareTag("Player"))
         {
@@ -165,19 +137,15 @@ public class MeleeEnemy : MonoBehaviour
 
     private void DealDamage()
     {
-        Debug.Log($"Dealing {damageAmount} damage to player");
         Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
         player.TakeDamage(damageAmount);
     }
 
-
     void CheckForBullets()
     {
         if (Time.time - lastDodgeTime < dodgeCooldown)
-        {
             return;
-        }
 
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, bulletDetectionRadius);
         foreach (Collider2D collider in colliders)
@@ -185,15 +153,11 @@ public class MeleeEnemy : MonoBehaviour
             if (collider.CompareTag("PlayerBullet"))
             {
                 Vector2 bulletDirection = (collider.transform.position - transform.position).normalized;
-                
-                float dodgeAngle = 30f * Mathf.Deg2Rad;
-                float randomSign = Random.value > 0.5f ? 1f : -1f;
-                
-                float cos = Mathf.Cos(dodgeAngle);
-                float sin = Mathf.Sin(dodgeAngle) * randomSign;
+
+                float dodgeAngle = Random.Range(-30f, 30f) * Mathf.Deg2Rad;
                 dodgeDirection = new Vector2(
-                    bulletDirection.x * cos - bulletDirection.y * sin,
-                    bulletDirection.x * sin + bulletDirection.y * cos
+                    bulletDirection.x * Mathf.Cos(dodgeAngle) - bulletDirection.y * Mathf.Sin(dodgeAngle),
+                    bulletDirection.x * Mathf.Sin(dodgeAngle) + bulletDirection.y * Mathf.Cos(dodgeAngle)
                 ).normalized;
 
                 isDodging = true;
@@ -203,17 +167,11 @@ public class MeleeEnemy : MonoBehaviour
         }
     }
 
-    bool IsWithinBoundaries(Vector3 position)
-    {
-        return position.x >= minX && position.x <= maxX && 
-               position.y >= minY && position.y <= maxY;
-    }
-
     void SmoothRotation()
     {
         float currentAngle = transform.eulerAngles.z;
         float angleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
-        
+
         if (Mathf.Abs(angleDifference) < 1f)
         {
             transform.rotation = Quaternion.Euler(0, 0, targetAngle);
@@ -222,18 +180,15 @@ public class MeleeEnemy : MonoBehaviour
 
         float rotationDirection = Mathf.Sign(angleDifference);
         float newAngle = currentAngle + rotationDirection * rotationSpeed * Time.deltaTime;
-        
-        newAngle = newAngle % 360f;
-        if (newAngle < 0) newAngle += 360f;
-        
+
         transform.rotation = Quaternion.Euler(0, 0, newAngle);
     }
 
     void GenerateRandomAngle()
     {
-        randomAngle = angles[Random.Range(0, angles.Length)];
-        randomAngle += Random.Range(-15, 16);
-        transform.rotation = Quaternion.Euler(0, 0, randomAngle);
+        targetAngle = angles[Random.Range(0, angles.Length)] + Random.Range(-15, 16);
+        transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+        MoveForward();
     }
 
     public void PlayDestroyedAnimation(bool isAlive)
@@ -242,7 +197,9 @@ public class MeleeEnemy : MonoBehaviour
         {
             StopAllCoroutines();
             Instantiate(destroyPrefab, transform.position, Quaternion.identity);
-            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform); ScoreManager.Instance.AddScore();
-            }Destroy(gameObject);
+            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+            ScoreManager.Instance.AddScore();
+            Destroy(gameObject);
         }
     }
+}

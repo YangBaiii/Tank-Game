@@ -42,7 +42,7 @@ public class PlayerBullet : MonoBehaviour
             SoundManager.Instance.PlaySoundFXClip(bulletHit, transform);
             Destroy(gameObject);
         }
-        else if (collision.gameObject.CompareTag("Enemy"))
+        else if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Melee"))
         {
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
             SoundManager.Instance.PlaySoundFXClip(explosionSound, transform);
