@@ -28,7 +28,6 @@ public class VictoryManager : MonoBehaviour
     {
         continueButton.onClick.AddListener(OnContinueClicked);
         backButton.onClick.AddListener(OnBackClicked);
-        victoryUI.SetActive(true);
     }
 
     public void ShowVictory()

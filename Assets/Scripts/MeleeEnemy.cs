@@ -37,6 +37,8 @@ public class MeleeEnemy : MonoBehaviour
 
     HealthSystemForDummies healthSystem;
 
+    private EnemyGenerator generator;
+
     void Start()
     {
         healthSystem = GetComponent<HealthSystemForDummies>();
@@ -200,6 +202,19 @@ public class MeleeEnemy : MonoBehaviour
             SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
             ScoreManager.Instance.AddScore();
             Destroy(gameObject);
+        }
+    }
+
+    public void SetGenerator(EnemyGenerator enemyGenerator)
+    {
+        generator = enemyGenerator;
+    }
+
+    private void OnDestroy()
+    {
+        if (generator != null)
+        {
+            generator.OnEnemyDestroyed(true);
         }
     }
 }

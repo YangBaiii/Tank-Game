@@ -1,19 +1,20 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using Unity.Mathematics;
+using UnityEngine.SceneManagement;
 
 public class LivesManager : MonoBehaviour
 {
     public static LivesManager Instance { get; private set; }
+
+    private int maxLives = 10;
+    private int currentLives;
     
-    private int maxLives = 10; // Initial max lives
     [SerializeField] private GameObject heartPrefab;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Vector3 respawnPosition = new Vector3(3f, 0f, 0f);
-    
+
     private GameObject[] heartObjects;
-    private int currentLives;
 
     private void Awake()
     {
@@ -21,6 +22,9 @@ public class LivesManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            currentLives = maxLives; // Initialize only once
+            heartObjects = new GameObject[maxLives]; 
         }
         else
         {
@@ -28,10 +32,13 @@ public class LivesManager : MonoBehaviour
         }
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        CreateHearts(); // Recreate hearts on scene load
+    }
+
     private void Start()
     {
-        currentLives = maxLives;
-        heartObjects = new GameObject[11]; // Allow up to 20 hearts dynamically
         CreateHearts();
     }
 
@@ -39,10 +46,17 @@ public class LivesManager : MonoBehaviour
     {
         if (heartPrefab == null) return;
 
+        // Clear existing hearts before creating new ones
+        foreach (var heart in heartObjects)
+        {
+            if (heart != null)
+                Destroy(heart);
+        }
+
         float startX = -15f;
         float startY = 2.5f;
-        float spacingX = 2f; // Adjust for horizontal spacing
-        float spacingY = 2.5f; // Adjust for row spacing
+        float spacingX = 2f;
+        float spacingY = 2.5f;
 
         for (int i = 0; i < currentLives; i++)
         {
@@ -50,7 +64,7 @@ public class LivesManager : MonoBehaviour
             float y = startY - (i / 5) * spacingY;
 
             GameObject heart = Instantiate(heartPrefab);
-            heart.transform.position = new Vector3(x, y, 0f); // Set position manually
+            heart.transform.position = new Vector3(x, y, 0f);
             heartObjects[i] = heart;
         }
     }
@@ -75,29 +89,15 @@ public class LivesManager : MonoBehaviour
 
     public void AddLife()
     {
-        currentLives++; 
-        UpdateHearts();
+        if (currentLives < maxLives)
+        {
+            currentLives++;
+            UpdateHearts();
+        }
     }
 
     private void UpdateHearts()
     {
-        // If new heart needed, create it
-        if (heartObjects[currentLives - 1] == null)
-        {
-            float startX = -15f;
-            float startY = 3f;
-            float spacingX = 2f;
-            float spacingY = 2.5f;
-
-            float x = startX + ((currentLives - 1) % 5) * spacingX;
-            float y = startY - ((currentLives - 1) / 5) * spacingY;
-
-            GameObject newHeart = Instantiate(heartPrefab);
-            newHeart.transform.position = new Vector3(x, y, 0f);
-            heartObjects[currentLives - 1] = newHeart;
-        }
-
-        // Update heart visibility
         for (int i = 0; i < heartObjects.Length; i++)
         {
             if (heartObjects[i] != null)

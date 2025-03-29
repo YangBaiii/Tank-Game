@@ -40,7 +40,8 @@ public class Enemy : MonoBehaviour
     private Vector3 lastPosition;
     
     HealthSystemForDummies healthSystem;
-    
+    private EnemyGenerator generator;
+
     void Start()
     {
         ShootBullet();
@@ -227,6 +228,19 @@ public class Enemy : MonoBehaviour
                 VictoryManager.Instance.ShowVictory();
             }
             Destroy(gameObject);
+        }
+    }
+
+    public void SetGenerator(EnemyGenerator enemyGenerator)
+    {
+        generator = enemyGenerator;
+    }
+
+    private void OnDestroy()
+    {
+        if (generator != null)
+        {
+            generator.OnEnemyDestroyed(false);
         }
     }
 }   
