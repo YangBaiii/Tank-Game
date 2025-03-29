@@ -45,4 +45,10 @@ public class ScoreManager : MonoBehaviour
     {
         return currentScore;
     }
+
+    public void ResetScore()
+    {
+        currentScore = GetCurrentScore();
+        UpdateScoreDisplay();
+    }
 } 

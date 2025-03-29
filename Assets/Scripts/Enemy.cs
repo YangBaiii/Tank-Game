@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
@@ -217,24 +218,23 @@ public class Enemy : MonoBehaviour
         if (!isAlive)
         {
             StopAllCoroutines();
-            
-            if (destroyPrefab != null)
+            Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
+            ScoreManager.Instance.AddScore(); 
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            if (enemies.Length <= 1) // This enemy is about to be destroyed, so 1 means it's the last one
             {
-                Instantiate(destroyPrefab, transform.position, Quaternion.identity);
+                // Load next level after a short delay
+               LoadNextLevel();
             }
-            
-            if (destroyedSound != null && SoundManager.Instance != null)
-            {
-                SoundManager.Instance.PlaySoundFXClip(destroyedSound, transform);
-            }
-
-            // Add score when enemy is destroyed
-            if (ScoreManager.Instance != null)
-            {
-                ScoreManager.Instance.AddScore();
-            }
-            
             Destroy(gameObject);
         }
     }
-}
+
+    private void LoadNextLevel()
+    {
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex+1);
+        ScoreManager.Instance.ResetScore();
+        TimeManager.Instance.ResetTime();
+    }
+}   

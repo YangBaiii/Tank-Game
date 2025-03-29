@@ -105,4 +105,10 @@ public class TimeManager : MonoBehaviour
     {
         return isPaused;
     }
+
+    public void ResetTime()
+    {
+        currentTime = GetCurrentTime();
+        UpdateTimeDisplay();
+    }
 }

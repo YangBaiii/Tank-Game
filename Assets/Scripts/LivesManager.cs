@@ -40,7 +40,7 @@ public class LivesManager : MonoBehaviour
         if (heartPrefab == null) return;
 
         float startX = -15f;
-        float startY = 1.5f;
+        float startY = 2.5f;
         float spacingX = 2f; // Adjust for horizontal spacing
         float spacingY = 2.5f; // Adjust for row spacing
 
@@ -85,7 +85,7 @@ public class LivesManager : MonoBehaviour
         if (heartObjects[currentLives - 1] == null)
         {
             float startX = -15f;
-            float startY = 1.5f;
+            float startY = 3f;
             float spacingX = 2f;
             float spacingY = 2.5f;
 
