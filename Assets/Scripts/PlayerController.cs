@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1;
         playerSpeed = normalSpeed;
         healthSystem = GetComponent<HealthSystemForDummies>();
         healthSystem.OnIsAliveChanged.AddListener(PlayDestroyedAnimation);
@@ -160,13 +161,5 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(float amount)
     {
         healthSystem.AddToCurrentHealth(-amount);
-    }
-
-    private IEnumerator PowerIncreaseRoutine(float multiplier, float duration)
-    {
-        currentAttackPower = multiplier;
-        yield return new WaitForSeconds(duration);
-        currentAttackPower = 1f;
-        powerIncreaseCoroutine = null;
     }
 }

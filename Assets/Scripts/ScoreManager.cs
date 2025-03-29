@@ -27,6 +27,10 @@ public class ScoreManager : MonoBehaviour
     private void Start()
     {
         FindScoreText();
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            currentScore = 0;
+        }
         UpdateScoreDisplay();
     }
 

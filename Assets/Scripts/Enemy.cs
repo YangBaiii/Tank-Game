@@ -224,22 +224,9 @@ public class Enemy : MonoBehaviour
             GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
             if (enemies.Length <= 1) // This enemy is about to be destroyed, so 1 means it's the last one
             {
-                // Load next level after a short delay
-               LoadNextLevel();
+                VictoryManager.Instance.ShowVictory();
             }
             Destroy(gameObject);
         }
-    }
-
-    private void LoadNextLevel()
-    {
-        int currentScore = ScoreManager.Instance.GetCurrentScore();
-        float currentTime = TimeManager.Instance.GetCurrentTime();
-
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1).completed += (operation) =>
-        {
-            ScoreManager.Instance.ResetScore(currentScore);
-            TimeManager.Instance.ResetTime(currentTime);
-        };
     }
 }   
