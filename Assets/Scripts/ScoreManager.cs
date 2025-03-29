@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class ScoreManager : MonoBehaviour
@@ -6,7 +7,7 @@ public class ScoreManager : MonoBehaviour
     public static ScoreManager Instance { get; private set; }
 
     [SerializeField] private TextMeshProUGUI scoreText;
-    private int currentScore = 0;
+    private static int currentScore = 0;
     private int pointsPerEnemy = 20;
 
     private void Awake()
@@ -15,6 +16,7 @@ public class ScoreManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded; // Listen for scene changes
         }
         else
         {
@@ -22,9 +24,25 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
+        FindScoreText();
         UpdateScoreDisplay();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        FindScoreText();
+        UpdateScoreDisplay();
+    }
+
+    private void FindScoreText()
+    {
+        scoreText = GameObject.Find("ScoreText")?.GetComponent<TextMeshProUGUI>();
+        if (scoreText == null)
+        {
+            Debug.LogWarning("ScoreText not found! Make sure the GameObject is named correctly.");
+        }
     }
 
     public void AddScore()
@@ -46,9 +64,9 @@ public class ScoreManager : MonoBehaviour
         return currentScore;
     }
 
-    public void ResetScore()
+    public void ResetScore(int score)
     {
-        currentScore = GetCurrentScore();
+        currentScore = score;
         UpdateScoreDisplay();
     }
-} 
+}

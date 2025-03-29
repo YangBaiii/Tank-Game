@@ -233,8 +233,13 @@ public class Enemy : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex+1);
-        ScoreManager.Instance.ResetScore();
-        TimeManager.Instance.ResetTime();
+        int currentScore = ScoreManager.Instance.GetCurrentScore();
+        float currentTime = TimeManager.Instance.GetCurrentTime();
+
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1).completed += (operation) =>
+        {
+            ScoreManager.Instance.ResetScore(currentScore);
+            TimeManager.Instance.ResetTime(currentTime);
+        };
     }
 }   

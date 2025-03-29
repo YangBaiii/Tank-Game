@@ -1,17 +1,17 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 using TMPro;
 
 public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance { get; private set; }
-    
+
     [SerializeField] private TextMeshProUGUI timeText;
-    [SerializeField] private float gameTime = 0f; 
+    [SerializeField] private float gameTime = 0f;
     [SerializeField] private bool isGameActive = true;
-    
-    private float currentTime;
+
+    private static float currentTime;
     private bool isPaused = false;
     private float pauseStartTime;
 
@@ -21,6 +21,7 @@ public class TimeManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded; // Listen for scene changes
         }
         else
         {
@@ -28,13 +29,29 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
+        FindTimeText();
         currentTime = gameTime;
         UpdateTimeDisplay();
     }
 
-    void Update()
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        FindTimeText();
+        UpdateTimeDisplay();
+    }
+
+    private void FindTimeText()
+    {
+        timeText = GameObject.Find("TimeText")?.GetComponent<TextMeshProUGUI>();
+        if (timeText == null)
+        {
+            Debug.LogWarning("TimeText not found! Make sure the GameObject is named correctly.");
+        }
+    }
+
+    private void Update()
     {
         if (isGameActive && !isPaused)
         {
@@ -43,7 +60,7 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    void UpdateTimeDisplay()
+    private void UpdateTimeDisplay()
     {
         if (timeText != null)
         {
@@ -106,9 +123,9 @@ public class TimeManager : MonoBehaviour
         return isPaused;
     }
 
-    public void ResetTime()
+    public void ResetTime(float time)
     {
-        currentTime = GetCurrentTime();
+        currentTime = time;
         UpdateTimeDisplay();
     }
 }
